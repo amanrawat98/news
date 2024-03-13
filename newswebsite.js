@@ -9,8 +9,10 @@ let page = 1;
 
 var query = "";
 
+let apikey = 'a3b63d097f7145119ae016e5b6a51a27';
+
 let getdata = async (inputdata, page = 1) => {
-  let url = `https://newsapi.org/v2/everything?q=${inputdata}&pageSize=10&page=${page}&apiKey=4947050dc60d4962bb67a92d81c2c16b`;
+  let url = `https://newsapi.org/v2/everything?q=${inputdata}&pageSize=10&page=${page}&apiKey=${apikey}`;
 
   try {
     let data = await (await fetch(url)).json();
@@ -32,6 +34,10 @@ let getquery = (query) => {
   console.log(query);
   return query;
 };
+
+let inputquery = getquery();
+let selectedtab = '';
+
 
 let displaydata = async (newsapiarticles) => {
   console.log("newsapiarticles", newsapiarticles);
@@ -68,7 +74,8 @@ btn.addEventListener("click", async function () {
   console.log("page id", pageid);
   let inputdata = getquery();
   let value = await getdata(inputdata);
-  console.log("the api", value);
+  console.log("value api", value);
+  cont.innerHTML = '';
   displaydata(value);
 });
 
@@ -86,10 +93,17 @@ window.onload = function () {
     console.log(srrollheight, offsetheight);
 
     if (srrollheight + viewport + 10 >= offsetheight) {
-      let inputdata = searchbar.value;
-      console.log("q  inputdata", inputdata);
+      if(searchbar.value !== '') {
+         inputquery = searchbar.value;
+ inputquery;
+      } 
+      else {
+         inputquery = selectedtab;
+      }
+     // console.log("q  inputdata", inputdata);
       ++page;
-      let data = await getdata(inputdata, page);
+      let data = await getdata(inputquery, page);
+      console.log("inputquery", inputquery);
       displaydata(data);
     }
   });
@@ -101,11 +115,15 @@ for (let i = 0; i < links.length; i++) {
   links[i].addEventListener("click", async function (e) {
     console.log("the event is", e);
     console.log("Clicked element:", e.currentTarget.innerHTML); // Accessing the clicked element
-
+    searchbar.value = '';
     let value = e.currentTarget.innerHTML;
+
     let data = await getdata(value, 1);
+    
     cont.innerHTML = '';
-    searchbar.value = value;
+    inputquery = value;
+    selectedtab = value;
+   // searchbar.value = value;
     displaydata(data);
   });
 }
